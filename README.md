@@ -12,19 +12,32 @@ Also, to parse Intel HEX source files from libcintelhex (https://github.com/mart
 
 Usage
 ---------
--r ADDR - read flash memory from start to ADDR in words (max addr = capacity in bytes/2)
--w HEX - write flash memory from intel HEX file
--e - erase devices
--c HEX - read and compare HEX with flash memory
--a HEX - automatically erase, write and check data in chip
--f - read fuse bits
--l BYTE - write low fuse
--h BYTE - write high fuse
--x BYTE - write extended fuse
--L read lock bits
+-r ADDR - read flash memory from start to ADDR in words (max addr = capacity in bytes/2)  
+-w HEX - write flash memory from intel HEX file  
+-e - erase devices  
+-c HEX - read and compare HEX with flash memory 
+-a HEX - automatically erase, write and check data in chip  
+-f - read fuse bits  
+-l BYTE - write low fuse  
+-h BYTE - write high fuse  
+-x BYTE - write extended fuse  
+-L read lock bits  
+
+
+Disklaimer
+-----------
+
 
 Project is under development and unstable!!!
-To add another MCU's it's necessary to change definition in main.c file. Theoretically, current version should work with any Atmega chip, but was tested only with on Atmega32u4. Implementation for Attiny devices may need to change SPI programming commands and bit shifting in functions.
+To add another MCU's it's necessary to change definition in main.c file. Theoretically, current version should work with any Atmega chip, but was tested only with on Atmega32u4. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
+
+###TODO:
+Read/write EEPROM,  
+Writing from HEX with gaps (current version can write only continous HEX),  
+Attiny device support, device choose in command line,  
+UI
+
+
 
 License
 ------------
