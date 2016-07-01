@@ -40,7 +40,7 @@ void sig_int(int signo)
 
 /* Configure CH341A, find the device and set the default interface. */
 int32_t ch341Configure(uint16_t vid, uint16_t pid)
-{ 
+{
     struct libusb_device *dev;
     int32_t ret;
     struct sigaction sa;
@@ -58,12 +58,12 @@ int32_t ch341Configure(uint16_t vid, uint16_t pid)
     }
 
     libusb_set_debug(NULL, 3);
-    
+
     if(!(devHandle = libusb_open_device_with_vid_pid(NULL, vid, pid))) {
         fprintf(stderr, "Couldn't open device [%04x:%04x].\n", vid, pid);
         return -1;
     }
- 
+
     if(!(dev = libusb_get_device(devHandle))) {
         fprintf(stderr, "Couldn't get bus number and address.\n");
         goto close_handle;
@@ -76,21 +76,21 @@ int32_t ch341Configure(uint16_t vid, uint16_t pid)
             goto close_handle;
         }
     }
-    
+
     ret = libusb_claim_interface(devHandle, 0);
 
     if(ret) {
         fprintf(stderr, "Failed to claim interface 0: '%s'\n", strerror(-ret));
         goto close_handle;
     }
-    
+
     ret = libusb_get_descriptor(devHandle, LIBUSB_DT_DEVICE, 0x00, desc, 0x12);
 
     if(ret < 0) {
         fprintf(stderr, "Failed to get device descriptor: '%s'\n", strerror(-ret));
         goto release_interface;
     }
-    
+
     printf("Device reported its revision [%d.%02d]\n", desc[12], desc[13]);
     sa.sa_handler = &sig_int;
     sa.sa_flags = SA_RESTART;
@@ -178,10 +178,10 @@ int32_t ch341SpiStream(uint8_t *out, uint8_t *in, uint32_t len)
     bool done;
 
     if (devHandle == NULL) return -1;
-
-    ch341SpiCs(outBuf, true);
-    ret = usbTransfer(__func__, BULK_WRITE_ENDPOINT, outBuf, 4);
-    if (ret < 0) return -1;
+  // disable cs toggle for every package
+  //  ch341SpiCs(outBuf, true);
+  //  ret = usbTransfer(__func__, BULK_WRITE_ENDPOINT, outBuf, 4);
+  //  if (ret < 0) return -1;
 
     inPtr = in;
 
@@ -206,9 +206,9 @@ int32_t ch341SpiStream(uint8_t *out, uint8_t *in, uint32_t len)
             *inPtr++ = swapByte(inBuf[i]);
     } while (!done);
 
-    ch341SpiCs(outBuf, false);
-    ret = usbTransfer(__func__, BULK_WRITE_ENDPOINT, outBuf, 3);
-    if (ret < 0) return -1;
+//    ch341SpiCs(outBuf, false);
+//    ret = usbTransfer(__func__, BULK_WRITE_ENDPOINT, outBuf, 3);
+//    if (ret < 0) return -1;
     return 0;
 }
 
@@ -332,7 +332,7 @@ int32_t ch341SpiRead(uint8_t *buf, uint32_t add, uint32_t len)
 {
     uint8_t out[CH341_MAX_PACKET_LEN];
     uint8_t in[CH341_PACKET_LENGTH];
-
+    
     if (devHandle == NULL) return -1;
     /* what subtracted is: 1. first cs package, 2. leading command for every other packages,
      * 3. second package contains read flash command and 3 bytes address */
@@ -408,7 +408,7 @@ int32_t ch341SpiRead(uint8_t *buf, uint32_t add, uint32_t len)
     return ret;
 }
 
-#define WRITE_PAYLOAD_LENGTH 301 // 301 is the length of a page(256)'s data with protocol overhead 
+#define WRITE_PAYLOAD_LENGTH 301 // 301 is the length of a page(256)'s data with protocol overhead
 /* write buffer(*buf) to SPI flash */
 int32_t ch341SpiWrite(uint8_t *buf, uint32_t add, uint32_t len)
 {

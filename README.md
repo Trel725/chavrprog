@@ -12,10 +12,29 @@ Also, to parse Intel HEX source files from libcintelhex (https://github.com/mart
 
 Usage
 ---------
--r ADDR - read flash memory from start to ADDR in words (max addr = capacity in bytes/2)  
--w HEX - write flash memory from intel HEX file  
+Connect ch341 programmer by scheme:
+AVR    ch341a  
+MISO-----MISO  
+MOSI-----MOSI  
+SCK------SCK  
+Reset----CS  
+GND------GND
+
+Or the same using popular chineese programmer, connect to socket for spi flash:  
+socket  AVR  
+1-------Reset  
+2-------MISO  
+4-------GND  
+5-------MOSI  
+6-------SCK
+
+### Commads
+
+-r ADDR - read flash memory from start to ADDR in bytes, or  
+-r f FILE read whole flash memory to specified file  
+-w HEX - write flash memory from Intel HEX file  
 -e - erase devices  
--c HEX - read and compare HEX with flash memory 
+-c HEX - read and compare HEX with flash memory
 -a HEX - automatically erase, write and check data in chip  
 -f - read fuse bits  
 -l BYTE - write low fuse  
@@ -29,7 +48,7 @@ Disklaimer
 
 
 Project is under development and unstable!!!
-To add another MCU's it's necessary to change definition in main.c file. Theoretically, current version should work with any Atmega chip, but was tested only with on Atmega32u4. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
+To add another MCU's it's necessary to change definition in cofig.h file. Theoretically, current version should work with any Atmega chip, but was tested only with on Atmega32u4. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
 
 ###TODO:
 Read/write EEPROM,  
@@ -52,4 +71,3 @@ for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program. If not, see <http://www.gnu.org/licenses/>.
-

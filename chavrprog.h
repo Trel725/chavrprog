@@ -18,13 +18,41 @@
 * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef _CONFIG_H
-#define _CONFIG_H
+#ifndef CHAVRPROG_H
+#define CHAVRPROG_H
+#include "config.h"
 
-//device-specific definition
 
-static const unsigned char device_sign[3]={0x1e,0x95,0x87};
-#define PAGESIZE 64
-#define NUM_OF_PAGES 256
+#define TOT_MEM PAGESIZE*NUM_OF_PAGES//size of memory in words
+#if PAGESIZE == 64
+#define PAGE_SHIFT 7
+#define PAGE_MSQ 0x7f
+#elif PAGESIZE == 32
+#define PAGE_SHIFT 6
+#define PAGE_MSQ 0x3f
+#elif PAGESIZE == 16
+#define PAGE_MSQ 0x1f
+#define PAGE_SHIFT 5
+#endif
+
+
+unsigned char data_buffer[TOT_MEM*2];//buffer for reading chip
+unsigned char spi_data[4];
+
+void toggle_reset(short stat);
+void ch_exit(void);
+void ch341init(void);
+void chip_prog_enable(void);
+void write_fuses(unsigned char fuse, int fuse_type);
+char* read_fuses(void);
+void check_signature(void);
+void chip_erace();
+void main_write_stream(const char * filename);
+void check_flash(const char * filename);
+void read_locks();
+void print_help();
+void ch_init(void);
+void read_flash(int mem);
+
 
 #endif

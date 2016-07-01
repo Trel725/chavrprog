@@ -19,8 +19,8 @@
  */
 #ifndef __CH341_H__
 #define __CH341_H__
-
-#ifdef __cplusplus                              
+#include <stdbool.h>
+#ifdef __cplusplus
 extern "C" {
 #endif
 #define     DEFAULT_TIMEOUT        1000     // 300mS for USB timeouts
@@ -64,6 +64,7 @@ extern "C" {
 #define     CH341A_STM_I2C_750K    0x03
 #define     CH341A_STM_SPI_DBL     0x04
 
+void ch341SpiCs(uint8_t *ptr, bool selected);
 int32_t usbTransfer(const char * func, uint8_t type, uint8_t* buf, int len);
 int32_t ch341Configure(uint16_t vid, uint16_t pid);
 int32_t ch341SetStream(uint32_t speed);
@@ -77,7 +78,7 @@ int32_t ch341SpiWrite(uint8_t *buf, uint32_t add, uint32_t len);
 int32_t ch341Release(void);
 uint8_t swapByte(uint8_t c);
 
-#ifdef __cplusplus                              
+#ifdef __cplusplus
 }
 #endif
 
