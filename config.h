@@ -20,11 +20,16 @@
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
+#define CONF_LENGTH 7 //num of predefined chips
 
-//device-specific definition
+typedef struct{
+  const char* name;
+  const unsigned char signature[3];
+  const int pagesize;
+  const int num_of_pages;
+  const int cfg_eeprom;
+} devconf_t;
 
-static const unsigned char device_sign[3]={0x1e,0x95,0x87};
-#define PAGESIZE 64
-#define NUM_OF_PAGES 256
+const devconf_t confset[CONF_LENGTH];
 
 #endif

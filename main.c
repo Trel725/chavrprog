@@ -26,6 +26,17 @@
 #include <cintelhex.h>
 #include <unistd.h>
 #include "chavrprog.h"
+#include "config.h"
+
+int file_exists(const char * filename){
+  FILE *file= fopen(filename, "r");
+  if (file!=0){
+    fclose(file);
+    return 1;
+  }
+  return 0;
+}
+
 
 
 int main(int argc, char * argv[]){
@@ -38,8 +49,29 @@ int main(int argc, char * argv[]){
   int opts;
 
 
-  while ( (opts = getopt(argc,argv,"r:w:ea:c:fl:H:x:L")) != -1){
+  while ( (opts = getopt(argc,argv,"d:r:w:ea:c:fl:H:x:L")) != -1){
     switch (opts){
+
+
+      case 'd':
+      for(int i=0; i<(sizeof confset / sizeof confset[0]); i++){
+        if(strcmp(optarg, confset[i].name)==0){
+          assign_cfg(i);
+          break;
+        }
+        if(i==((sizeof confset / sizeof confset[0])-1)){
+          printf("No such chip\n");
+          printf("Available devices:\n");
+          for(int i=0; i<CONF_LENGTH; i++){
+            printf("%s\n", confset[i].name);
+          }
+          exit(0);
+        }
+      }
+
+      break;
+
+
 
       case 'r':
 
@@ -70,9 +102,12 @@ int main(int argc, char * argv[]){
       break;
 
       case 'w':
-      ch_init();
-      printf("Write device using %s\n",optarg);
-      main_write_stream(optarg);
+      if(file_exists(optarg)){
+        ch_init();
+        printf("Write device using %s\n",optarg);
+        main_write_stream(optarg);
+      }
+      else printf("No such file\n");
       break;
 
       case 'e':
@@ -82,18 +117,40 @@ int main(int argc, char * argv[]){
       break;
 
       case 'c':
-      printf("Checking...\n");
-      ch_init();
-      check_flash(optarg);
+      if(file_exists(optarg)){
+        printf("Checking...\n");
+        ch_init();
+        check_flash_strict(optarg);
+      }
+      else  printf("No such file\n");
       break;
 
-      case 'a': printf("Erasing...\n");
-      ch_init();
-      chip_erace();
-      printf("Writing...\n");
-      main_write_stream(optarg);
-      printf("Checking...\n");
-      check_flash(optarg);
+      case 'a':
+      if(argv[optind]==NULL) {
+        if(file_exists(optarg)){
+          printf("%s", argv[optind]);
+          printf("Erasing...\n");
+          ch_init();
+          chip_erace();
+          printf("Writing...\n");
+          main_write_stream(optarg);
+          printf("Checking...\n");
+          check_flash(optarg);
+        }
+        else printf("No such file\n");
+      }
+      else if(*optarg=='s'){
+        if(file_exists(argv[optind])){
+          printf("Erasing...\n");
+          ch_init();
+          chip_erace();
+          printf("Writing...\n");
+          main_write_stream(argv[optind]);
+          printf("Checking strictly...\n");
+          check_flash_strict(argv[optind]);
+        }
+        else printf("No such file\n");
+      }
       break;
 
       case 'f':

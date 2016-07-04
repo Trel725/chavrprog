@@ -22,22 +22,24 @@
 #define CHAVRPROG_H
 #include "config.h"
 
-
-#define TOT_MEM PAGESIZE*NUM_OF_PAGES//size of memory in words
-#if PAGESIZE == 64
-#define PAGE_SHIFT 7
-#define PAGE_MSQ 0x7f
-#elif PAGESIZE == 32
-#define PAGE_SHIFT 6
-#define PAGE_MSQ 0x3f
-#elif PAGESIZE == 16
-#define PAGE_MSQ 0x1f
-#define PAGE_SHIFT 5
-#endif
+#define PAGESIZE cfg_pagesize
+#define NUM_OF_PAGES cfg_num_of_pages
+#define TOT_MEM cfg_pagesize*cfg_num_of_pages //size of memory in words
+#define PAGE_SHIFT cfg_pageshift
+#define PAGE_MSQ cfg_pagemsq
 
 
-unsigned char data_buffer[TOT_MEM*2];//buffer for reading chip
+
+unsigned char * data_buffer;
 unsigned char spi_data[4];
+unsigned char device_sign[3];
+int cfg_pagesize;
+int cfg_num_of_pages;
+int cfg_eeprom;
+int cfg_pageshift;
+int cfg_pagemsq;
+
+
 
 void toggle_reset(short stat);
 void ch_exit(void);
@@ -53,6 +55,7 @@ void read_locks();
 void print_help();
 void ch_init(void);
 void read_flash(int mem);
-
+void assign_cfg(int index);
+void check_flash_strict(const char * filename);
 
 #endif
