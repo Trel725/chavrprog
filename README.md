@@ -54,7 +54,7 @@ Disklaimer
 
 Project is under development and may contain mistakes.
 
-To add another MCU's it's necessary to add it discription (name, pagesize, number of pages, eeprom size) to file config.c Most popular AVRs (which is used in Arduino) are already added. Theoretically, current version should work with any Atmega chip, if Atmel commad set is same for all chips, but was tested only with on Atmega32u4. Devices with more then 64K memory not supported now. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
+To add another MCU's it's necessary to add it discription (name, pagesize, number of pages, eeprom size) to file config.c Most popular AVRs (which is used in Arduino) are already added. Theoretically, current version should work with any Atmega chip, if Atmel commad set is same for all chips, but was tested only with on Atmega32u4, 328p and 16u2. Devices with more then 64K memory not supported now. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
 
 ###TODO:
 Read/write EEPROM,  
