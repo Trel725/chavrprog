@@ -9,6 +9,15 @@ serial programming protocol using low-level functions from ch341prog project.
 Also, to parse Intel HEX source files from libcintelhex (https://github.com/martin-helmich/libcintelhex) are used.
 
 
+Building
+-----------
+I've tried to iclude all necessary dependencies into the package, so it's necessary just run make. The only lib you should have installed in your system is libusb-1.0  
+
+Also to run chavrprog without root privileges you can create file 99-ch341.rules file into your rules.d directory (usually /etc/udev/rules.d) with following content:
+`SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="5512", GROUP="plugdev"`
+
+
+
 
 Usage
 ---------
@@ -47,6 +56,8 @@ use if you're flashing complex HEX, like Arduino bootloader or if default fails
 
 There is 2 verification functions implemented - fast and strict. By default with -a command fast one is used. This is good for writing homogenous HEX files - like most of programms, and works much faster because verifies only written part. Another one verifies whole memory, what makes it applicable for complex HEX with gaps, but works slower due to whole chip reading.
 
+The most typical command set looks like:  
+`chavrprog -d mega328p -a ./firmware.hex`
 
 Disklaimer
 -----------
