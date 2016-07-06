@@ -2,7 +2,7 @@
 
 AVR programmer using  Chinese ch341a chip
 
-There is a lot of strange things from China, and ch341a is one of the them. Cheap USB-Serial, USB-SPI, USB-I2C, USB-Parralel, etc makes it seems to be the real thing. However, lack of documentation make that device almost useless, except for couple of open-source projects. This project adds support for AVR microcotrollers programming using CH341a chip/
+There is a lot of strange things from China, and ch341a is one of the them. Cheap USB-Serial, USB-SPI, USB-I2C, USB-Parralel, etc makes it seems to be the real thing. However, lack of documentation make that device almost useless, except for couple of open-source projects. This project adds support for AVR microcotrollers programming using CH341a chip.
 
 Project is based on ch341prog by Setarcos (https://github.com/setarcos/ch341prog), and technically is a brief implementation of ATMEL
 serial programming protocol using low-level functions from ch341prog project.
@@ -54,14 +54,14 @@ Disklaimer
 
 Project is under development and may contain mistakes.
 
-To add another MCU's it's necessary to add it discription (name, pagesize, number of pages, eeprom size) to file config.c Most popular AVRs (which is used in Arduino) are already added. Theoretically, current version should work with any Atmega chip, if Atmel commad set is same for all chips, but was tested only with on Atmega32u4. Devices with more then 64K memory not supported now. Implementation for Attiny devices need to change SPI programming commands and bit shifting in functions.
+To add another MCU's it's necessary to add it discription (name, pagesize, number of pages, eeprom size) to file config.c Most popular AVRs (which is used in Arduino) are already added. Theoretically, current version should work with any Atmega chip, if Atmel commad set is same for all chips, but was tested only with on Atmega32u4. Devices with more then 64K memory not supported now. Initial implementation for Attiny is done, most popular devices added to config. Hopefully, it should work for any attiny, nevertheless tested inly with attiny13.
 
 ###TODO:
 Read/write EEPROM,  
-Writing from HEX with gaps (current version can write only continous HEX), | DONE
-Attiny device support, 
-device choose in command line | DONE
-UI | done (I am quite satisfacted)
+Writing from HEX with gaps (current version can write only continous HEX), | DONE  
+Attiny device support, | DONE    
+device choose in command line | DONE  
+UI | DONE (I am quite satisfied)  
 
 
 

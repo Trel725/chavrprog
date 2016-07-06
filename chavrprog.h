@@ -26,7 +26,7 @@
 #define NUM_OF_PAGES cfg_num_of_pages
 #define TOT_MEM cfg_pagesize*cfg_num_of_pages //size of memory in words
 #define PAGE_SHIFT cfg_pageshift
-#define PAGE_MSQ cfg_pagemsq
+#define PAGE_MSQ 0xff
 
 
 

@@ -29,12 +29,12 @@
 #include <unistd.h>
 #include "chavrprog.h"
 
-#define DELAY 5000
+#define DELAY 4500
 
 #define CMD_READ 0x20
 
 //SPI commands from datasheet
-
+int  cfg_write_shift;
 unsigned char read_fuse[4]={0b01010000, 0b00000000,0x00, 0x00};
 unsigned char read_fuseH[4]={0b01011000, 0b00001000,0x00, 0x00};
 unsigned char load_ext_addr[4]={0b01001101, 0x00, 0x00, 0x00};
@@ -66,18 +66,20 @@ void assign_cfg(int index){
   cfg_eeprom=confset[index].cfg_eeprom;
   memcpy(device_sign, confset[index].signature, 3);
 
-  if(cfg_pagesize==64)
-  {cfg_pageshift=7;
-    cfg_pagemsq= 0x7f;}
-    else if(cfg_pagesize==64)
-    {cfg_pageshift=7;
-      cfg_pagemsq= 0x7f;}
-      else if(cfg_pagesize==64)
-      {cfg_pageshift=7;
-        cfg_pagemsq= 0x7f;}
 
+cfg_pageshift=0;
+for(int i=cfg_pagesize; i; i=i/2){
+ cfg_pageshift++;
+}
+if(*(confset[index].name)=='t'){
+  cfg_write_shift=4;
+}
+ else if(*(confset[index].name)=='m'){
+   cfg_write_shift=2;
+}
+else printf("Device type not recognized\n");
 
-      }
+}
 
       void ch_exit(void){
         toggle_reset(0);
@@ -230,8 +232,8 @@ void assign_cfg(int index){
               //if it is - write a page
 
 
-              write_pg[1]=(addr_pg>>2);
-              write_pg[2]=((addr_pg<<6)&0xff);
+              write_pg[1]=(addr_pg>>cfg_write_shift);
+              write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
               ch341SpiStream(write_pg, spi_data,4);
               usleep(DELAY);
               printf("Writing page # %d, addr=%d\n", addr_pg, addr);
@@ -240,10 +242,10 @@ void assign_cfg(int index){
           }
 
 
-          if(((addr&PAGE_MSQ)+1)%(PAGESIZE*2)==0){//write page in the end of page
+          if((addr+1)%(PAGESIZE*2)==0){//write page in the end of page
 
-            write_pg[1]=(addr_pg>>2);
-            write_pg[2]=((addr_pg<<6)&0xff);
+            write_pg[1]=(addr_pg>>cfg_write_shift);
+            write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
             ch341SpiStream(write_pg, spi_data,4);
             usleep(DELAY);
             printf("Writing page # %d, addr=%d\n", addr_pg, addr);
@@ -254,8 +256,8 @@ void assign_cfg(int index){
 
         if( (*(*rs).ihrs_records).ihr_type == IHEX_EOF){//write page in the end of file
 
-          write_pg[1]=(addr_pg>>2);
-          write_pg[2]=((addr_pg<<6)&0xff);
+          write_pg[1]=(addr_pg>>(cfg_write_shift));
+          write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
 
           ch341SpiStream(write_pg, spi_data,4);
           printf("Writing page # %d, addr=%d\n", addr_pg, addr );
