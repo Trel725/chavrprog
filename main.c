@@ -23,7 +23,7 @@
 #include <string.h>
 #include <getopt.h>
 #include "ch341a.h"
-#include <cintelhex.h>
+#include "cintelhex.h"
 #include <unistd.h>
 #include "chavrprog.h"
 #include "config.h"
