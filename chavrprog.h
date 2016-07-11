@@ -48,14 +48,16 @@ void chip_prog_enable(void);
 void write_fuses(unsigned char fuse, int fuse_type);
 char* read_fuses(void);
 void check_signature(void);
-void chip_erace();
+void chip_erace(void);
 void main_write_stream(const char * filename);
 void check_flash(const char * filename);
-void read_locks();
-void print_help();
+void read_locks(void);
+void print_help(void);
 void ch_init(void);
 void read_flash(int mem);
 void assign_cfg(int index);
 void check_flash_strict(const char * filename);
+void read_eeprom(void);
+void write_eeprom(const char * filename);
 
 #endif

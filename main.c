@@ -49,7 +49,7 @@ int main(int argc, char * argv[]){
   int opts;
 
 
-  while ( (opts = getopt(argc,argv,"d:r:w:ea:c:fl:H:x:L")) != -1){
+  while ( (opts = getopt(argc,argv,"d:r:w:ea:c:fl:H:x:Lp:")) != -1){
     switch (opts){
 
 
@@ -178,6 +178,43 @@ int main(int argc, char * argv[]){
       case 'L':
       ch_init();
       read_locks();
+      break;
+
+      case 'p':
+      if(optarg[0]=='r'){
+        if(argv[optind]!=NULL) {
+          ch_init();
+          read_eeprom();
+          printf("Reading to %s...\n", argv[optind]);
+          FILE *fp;
+          fp = fopen(argv[optind], "w");
+          fwrite(data_buffer, 1, cfg_eeprom, fp);
+          fclose(fp);
+        }
+        else{
+          ch_init();
+          read_eeprom();
+          for (int i=0; i<cfg_eeprom; i++){
+            printf("%x ", data_buffer[i]);
+          }
+        }
+      }
+      else if(optarg[0]=='w' && argv[optind]!=NULL){
+        printf("Writing eeprom using %s\n", argv[optind]);
+        write_eeprom(argv[optind]);
+      }
+      else{
+        print_help();
+      }
+      break;
+
+      case 'v':
+      if(file_exists(optarg)){
+        ch_init();
+        printf("Write eeprom using %s\n",optarg);
+        write_eeprom(optarg);
+      }
+      else printf("No such file\n");
       break;
 
       default:
