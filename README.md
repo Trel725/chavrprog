@@ -48,6 +48,9 @@ socket  AVR
 -a HEX - automatically erase, write and check data in chip, or  
 -a s HEX - same with strict verification instead of fast default  
 use if you're flashing complex HEX, like Arduino bootloader or if default fails  
+-p r - read content of on-chip EEPROM, print in terminal, or  
+-p r FILE - read EEPROM to FILE  
+-p w HEX - write eeprom from intel hex file
 -f - read fuse bits  
 -l BYTE - write low fuse  
 -H BYTE - write high fuse  

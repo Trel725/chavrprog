@@ -410,7 +410,7 @@ void print_help(){
   "use if you're flashing complex HEX, like Arduino bootloader or if default fails\n"
   "-p r - read content of on-chip EEPROM, print in terminal, or\n"
   "-p r FILE - read EEPROM to FILE\n"
-  "-p w HEX - write eeprom from intel hex file"
+  "-p w HEX - write eeprom from intel hex file\n"
   "-f - read fuse bits\n"
   "-l BYTE - write low fuse\n"
   "-H BYTE - write high fuse\n"
