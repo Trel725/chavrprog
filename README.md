@@ -37,6 +37,8 @@ socket  AVR
 5-------MOSI  
 6-------SCK
 
+![alt text](https://raw.githubusercontent.com/Trel725/chavrprog/master/schematics.jpg)
+
 ### Commads
 
 -d DEVICE - specifies AVR chip  
