@@ -57,7 +57,7 @@ int32_t ch341Configure(uint16_t vid, uint16_t pid)
         return -1;
     }
 
-    libusb_set_debug(NULL, 3);
+    libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_INFO);
 
     if(!(devHandle = libusb_open_device_with_vid_pid(NULL, vid, pid))) {
         fprintf(stderr, "Couldn't open device [%04x:%04x].\n", vid, pid);
@@ -340,7 +340,7 @@ int32_t ch341SpiRead(uint8_t *buf, uint32_t add, uint32_t len)
     uint32_t tmp, pkg_len, pkg_count;
     struct libusb_transfer *xferBulkIn, *xferBulkOut;
     uint32_t idx = 0;
-    uint32_t ret;
+    uint32_t ret = 0;
     int32_t old_counter;
     struct timeval tv = {0, 100};
 
