@@ -26,7 +26,7 @@
 #define NUM_OF_PAGES cfg_num_of_pages
 #define TOT_MEM cfg_pagesize*cfg_num_of_pages //size of memory in words
 #define PAGE_SHIFT cfg_pageshift
-#define PAGE_MSQ 0xff
+#define PAGE_MASK cfg_pagemask
 
 
 
@@ -36,7 +36,8 @@ unsigned char device_sign[3];
 int cfg_pagesize;
 int cfg_num_of_pages;
 int cfg_eeprom;
-int cfg_pageshift;
+unsigned cfg_pageshift;
+unsigned cfg_pagemask;
 int cfg_pagemsq;
 
 
