@@ -34,7 +34,6 @@
 #define CMD_READ 0x20
 #define CMD_READ_EEPR 0xA0
 //SPI commands from datasheet
-int  cfg_write_shift;
 unsigned char read_fuse[4]={0b01010000, 0b00000000,0x00, 0x00};
 unsigned char read_fuseH[4]={0b01011000, 0b00001000,0x00, 0x00};
 unsigned char load_ext_addr[4]={0b01001101, 0x00, 0x00, 0x00};
@@ -67,18 +66,13 @@ void assign_cfg(int index){
   cfg_eeprom=confset[index].cfg_eeprom;
   memcpy(device_sign, confset[index].signature, 3);
 
-
-  cfg_pageshift=0;
-  for(int i=cfg_pagesize; i; i=i/2){
+  cfg_pageshift = 0;
+  cfg_pagemask = 0;
+  for(int i=cfg_pagesize; i>1; i>>=1){
     cfg_pageshift++;
+    cfg_pagemask <<= 1;
+    cfg_pagemask |= 1;
   }
-  if(*(confset[index].name)=='t'){
-    cfg_write_shift=4;
-  }
-  else if(*(confset[index].name)=='m'){
-    cfg_write_shift=2;
-  }
-  else printf("Device type not recognized\n");
 
 }
 
@@ -204,70 +198,54 @@ void read_flash(int mem){//mem - addr in bytes from begining
 }
 
 
-
+void write_page(unsigned addr_word) {
+  write_pg[1]=(addr_word>>8);
+  write_pg[2]=addr_word&0xff;
+  printf("Writing page # %d, addr=0x%x\n", addr_word>>PAGE_SHIFT, addr_word);
+  ch341SpiStream(write_pg, spi_data,4);
+  usleep(DELAY);
+}
 
 void main_write_stream(const char * filename){
   //yes, it is messy :(
+  
   ihex_recordset_t* rs = ihex_rs_from_file(filename);
-  int addr=0;
+  unsigned addr=0, addr_word=0;
   #define LENGTH 0x10 //for most hex files standart length of string =0x10, necessary to detect gap in file.
   //otherwise it will just take some longer time
 
   for(unsigned int i=0; i<(*rs).ihrs_count;i++){ //iterate over strings in HEX
-    int  addr_pg=addr>>PAGE_SHIFT;
     for(unsigned int j=0; j<((*(*rs).ihrs_records).ihr_length) && (*(*rs).ihrs_records).ihr_type!= IHEX_SSA ; j++){ //iterate over data in string
 
-      addr=(*(*rs).ihrs_records).ihr_address+j;
-      int  addr_pg=addr>>PAGE_SHIFT;
-      load_pg[2]=((addr&PAGE_MSQ)/2);
-      load_pg[3]=*(*(*rs).ihrs_records).ihr_data;
+      addr=(*(*rs).ihrs_records).ihr_address+j; //address from hex
+      addr_word = addr >> 1;
+
+      load_pg[0] = 0x40 | ((addr & 1) << 3); //switch between high/low byte
+      load_pg[2] = addr_word & PAGE_MASK; //LSB in address
+      load_pg[3] = *(*(*rs).ihrs_records).ihr_data; //single byte of data
+
       ch341SpiStream(load_pg, spi_data,4);
 
+      (*(*rs).ihrs_records).ihr_data++; //get next byte of data
 
-
-      load_pg[0]^=(1<<3); //change command from write low to low high
-      (*(*rs).ihrs_records).ihr_data++;
-
-      if( j==((*(*rs).ihrs_records).ihr_length-1)){
+      if( j==((*(*rs).ihrs_records).ihr_length-1)){ //is this last byte in that record?
         if((*((*rs).ihrs_records+1)).ihr_address>((*(*rs).ihrs_records).ihr_address+LENGTH)){ //check isn't there a gap
-        //if it is - write a page
+          //if it is - write a page
+          write_page(addr_word);
+        }
+      }
 
-
-        write_pg[1]=(addr_pg>>cfg_write_shift);
-        write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
-        ch341SpiStream(write_pg, spi_data,4);
-        usleep(DELAY);
-        printf("Writing page # %d, addr=%d\n", addr_pg, addr);
-
+      if((addr+1)%(PAGESIZE*2)==0){//write page in the end of page
+        write_page(addr_word);
       }
     }
 
-
-    if((addr+1)%(PAGESIZE*2)==0){//write page in the end of page
-
-      write_pg[1]=(addr_pg>>cfg_write_shift);
-      write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
-      ch341SpiStream(write_pg, spi_data,4);
-      usleep(DELAY);
-      printf("Writing page # %d, addr=%d\n", addr_pg, addr);
+    if( (*(*rs).ihrs_records).ihr_type == IHEX_EOF){//write page in the end of file
+      write_page(addr_word);
     }
 
-
+    (*rs).ihrs_records++;
   }
-
-  if( (*(*rs).ihrs_records).ihr_type == IHEX_EOF){//write page in the end of file
-
-    write_pg[1]=(addr_pg>>(cfg_write_shift));
-    write_pg[2]=((addr_pg<<(8-cfg_write_shift))&0xff);
-
-    ch341SpiStream(write_pg, spi_data,4);
-    printf("Writing page # %d, addr=%d\n", addr_pg, addr );
-    usleep(DELAY);//delay for write completion
-
-  }
-
-  (*rs).ihrs_records++;
-}
 
 }
 
@@ -286,7 +264,7 @@ void check_flash(const char * filename){
 
     }
     else{
-      printf("\nByte %d is corrupted, read: %x, expected:%x\n", i, data_buffer[i], *dst);
+      printf("\nByte 0x%x is corrupted, read: 0x%x, expected:0x%x\n", i, data_buffer[i], *dst);
       ch_exit();
     }
     dst++;
@@ -310,7 +288,7 @@ void check_flash_strict(const char * filename){
       num++;
       addr=(*(*rs).ihrs_records).ihr_address+j;
       if(data_buffer[addr]!=*(*(*rs).ihrs_records).ihr_data){
-        printf("Error at address %d, expected %x, read %x\n", addr, *(*(*rs).ihrs_records).ihr_data, data_buffer[addr]);
+        printf("Error at address 0x%x, expected %x, read %x\n", addr, *(*(*rs).ihrs_records).ihr_data, data_buffer[addr]);
         exit(0);
       }
       (*(*rs).ihrs_records).ihr_data++;

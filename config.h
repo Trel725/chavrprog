@@ -20,7 +20,7 @@
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
-#define CONF_LENGTH 17 //num of predefined chips
+#define CONF_LENGTH 18 //num of predefined chips
 
 typedef struct{
   const char* name;
