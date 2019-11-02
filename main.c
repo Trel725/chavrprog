@@ -37,7 +37,7 @@ int file_exists(const char * filename){
   return 0;
 }
 
-
+int delay = 4500; //default value of writing delay
 
 int main(int argc, char * argv[]){
   if(argc == 1) {
@@ -49,7 +49,7 @@ int main(int argc, char * argv[]){
   int opts;
 
 
-  while ( (opts = getopt(argc,argv,"d:r:w:ea:c:fl:H:x:Lp:")) != -1){
+  while ( (opts = getopt(argc,argv,"d:r:w:ea:c:fl:H:x:t:Lp:")) != -1){
     switch (opts){
 
 
@@ -125,6 +125,10 @@ int main(int argc, char * argv[]){
       else  printf("No such file\n");
       break;
 
+      case 't':
+        delay = (int)strtol(optarg, NULL, 0);
+        debug_call();
+
       case 'a':
       if(argv[optind]==NULL) {
         if(file_exists(optarg)){
@@ -160,19 +164,39 @@ int main(int argc, char * argv[]){
       printf("\n");
       break;
 
+
+      int fuse_val = -1;
       case 'l':
       ch_init();
-      write_fuses((int)strtol(optarg, NULL, 16),0);
+      fuse_val = (int)strtol(optarg, NULL, 0);
+      if ((fuse_val >= 0) && (fuse_val < 256)){
+        write_fuses(fuse_val,0);
+      }
+      else{
+        printf("Wrong fuse value, refusing to write...\n");
+      }
       break;
 
       case 'H':
       ch_init();
-      write_fuses((int)strtol(optarg, NULL, 16),1);
+      fuse_val = (int)strtol(optarg, NULL, 0);
+      if ((fuse_val >= 0) && (fuse_val < 256)){
+        write_fuses(fuse_val,1);
+      }
+      else{
+        printf("Wrong fuse value, refusing to write...\n");
+      }
       break;
 
       case 'x':
       ch_init();
-      write_fuses((int)strtol(optarg, NULL, 16),2);
+      fuse_val = (int)strtol(optarg, NULL, 0);
+      if ((fuse_val >= 0) && (fuse_val < 256)){
+        write_fuses(fuse_val,2);
+      }
+      else{
+        printf("Wrong fuse value, refusing to write...\n");
+      }
       break;
 
       case 'L':

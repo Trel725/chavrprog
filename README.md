@@ -54,10 +54,12 @@ use if you're flashing complex HEX, like Arduino bootloader or if default fails
 -p r FILE - read EEPROM to FILE  
 -p w HEX - write eeprom from intel hex file
 -f - read fuse bits  
--l BYTE - write low fuse  
--H BYTE - write high fuse  
--x BYTE - write extended fuse  
--L read lock bits  
+-l BYTE - write low fuse, must be in hex format, e.g. 0x2A 
+-H BYTE - write high fuse, must be in hex format, e.g. 0x2A  
+-x BYTE - write extended fuse, must be in hex format, e.g. 0x2A 
+-L read lock bits
+-t TIME - overwrite default writing timeout (4500 us), useful for slower chips. 12000 was reported to work with
+AtTiny85  
 
 There is 2 verification functions implemented - fast and strict. By default with -a command fast one is used. This is good for writing homogenous HEX files - like most of programms, and works much faster because verifies only written part. Another one verifies whole memory, what makes it applicable for complex HEX with gaps, but works slower due to whole chip reading.
 
@@ -77,6 +79,14 @@ Windows version
 ----------------
 chavrprog.exe is pre-compiled binary for cygwin64. To use it you should have cygwin installed with libusb-1.0 and libusb-win32 driver for ch341a installed through Zadig (http://zadig.akeo.ie/). 
 
+chavrprogTiny85.zip is a zip file containing prebuilt binary with necessary libraries, i.e. no 
+cygwin is needed. This is modified version, provided by Hilmar Strauch, tested on AtTiny85, but supposed to work with other Tiny as well. According to the reports, in this version 
+
+`chavrprogTiny85.exe -dtiny85 -a file.hex` 
+does not work, please use 
+`chavrprogTiny85.exe -dtiny85 -e` 
+followed by 
+`chavrprogTiny85.exe -dtiny85 -w file.hex`
 
 
 License

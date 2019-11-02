@@ -29,10 +29,11 @@
 #include <unistd.h>
 #include "chavrprog.h"
 
-#define DELAY 4500
-
 #define CMD_READ 0x20
 #define CMD_READ_EEPR 0xA0
+
+extern int delay;
+
 //SPI commands from datasheet
 unsigned char read_fuse[4]={0b01010000, 0b00000000,0x00, 0x00};
 unsigned char read_fuseH[4]={0b01011000, 0b00001000,0x00, 0x00};
@@ -58,6 +59,10 @@ unsigned char read_fs[3][4]={{0b01010000, 0b00000000,  0x00, 0x00},
 
 unsigned char fuses[3];
 
+
+void debug_call(void){
+    printf("Using delay of %d us\n", delay);
+}
 
 
 void assign_cfg(int index){
@@ -203,7 +208,7 @@ void write_page(unsigned addr_word) {
   write_pg[2]=addr_word&0xff;
   printf("Writing page # %d, addr=0x%x\n", addr_word>>PAGE_SHIFT, addr_word);
   ch341SpiStream(write_pg, spi_data,4);
-  usleep(DELAY);
+  usleep(delay);
 }
 
 void main_write_stream(const char * filename){
@@ -390,8 +395,9 @@ void print_help(){
   "-p r FILE - read EEPROM to FILE\n"
   "-p w HEX - write eeprom from intel hex file\n"
   "-f - read fuse bits\n"
-  "-l BYTE - write low fuse\n"
-  "-H BYTE - write high fuse\n"
-  "-x BYTE - write extended fuse\n"
-  "-L - read lock bits\n");
+  "-l BYTE - write low fuse, must be in hex format, e.g. 0x2A\n"
+  "-H BYTE - write high fuse, must be in hex format, e.g. 0x2A\n"
+  "-x BYTE - write extended fuse, must be in hex format, e.g. 0x2A\n"
+  "-L - read lock bits\n"
+  "-t TIME - overwrite default writing timeout (4500 us), useful for slower chips \n");
 }

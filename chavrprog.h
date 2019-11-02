@@ -40,8 +40,7 @@ unsigned cfg_pageshift;
 unsigned cfg_pagemask;
 int cfg_pagemsq;
 
-
-
+void debug_call(void);
 void toggle_reset(short stat);
 void ch_exit(void);
 void ch341init(void);
