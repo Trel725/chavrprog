@@ -75,6 +75,14 @@ Project is under development and may contain mistakes.
 
 To add another MCU's it's necessary to add it discription (name, pagesize, number of pages, eeprom size) to file config.c Most popular AVRs (which is used in Arduino) are already added. Theoretically, current version should work with any Atmega chip, if Atmel commad set is same for all chips, but was tested only with on Atmega32u4. Devices with more then 64K memory not supported now. Initial implementation for Attiny is done, most popular devices added to config. Hopefully, it should work for any attiny, nevertheless tested inly with attiny13.
 
+ToDo
+------------
+- Add support for devices with more than 64K memory
+- Add parser and make config separate file rather than compile-time structures
+- Better Windows support?
+
+Any contributions are welcomed.
+
 Windows version
 ----------------
 chavrprog.exe is pre-compiled binary for cygwin64. To use it you should have cygwin installed with libusb-1.0 and libusb-win32 driver for ch341a installed through Zadig (http://zadig.akeo.ie/). 
