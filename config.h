@@ -30,6 +30,6 @@ typedef struct{
   const int cfg_eeprom;
 } devconf_t;
 
-const devconf_t confset[CONF_LENGTH];
+extern const devconf_t confset[CONF_LENGTH];
 
 #endif

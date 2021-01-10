@@ -30,15 +30,15 @@
 
 
 
-unsigned char * data_buffer;
-unsigned char spi_data[4];
-unsigned char device_sign[3];
-int cfg_pagesize;
-int cfg_num_of_pages;
-int cfg_eeprom;
-unsigned cfg_pageshift;
-unsigned cfg_pagemask;
-int cfg_pagemsq;
+extern unsigned char * data_buffer;
+extern unsigned char spi_data[4];
+extern unsigned char device_sign[3];
+extern int cfg_pagesize;
+extern int cfg_num_of_pages;
+extern int cfg_eeprom;
+extern unsigned cfg_pageshift;
+extern unsigned cfg_pagemask;
+extern int cfg_pagemsq;
 
 void debug_call(void);
 void toggle_reset(short stat);

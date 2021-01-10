@@ -59,6 +59,15 @@ unsigned char read_fs[3][4]={{0b01010000, 0b00000000,  0x00, 0x00},
 
 unsigned char fuses[3];
 
+unsigned char * data_buffer;
+unsigned char spi_data[4];
+unsigned char device_sign[3];
+int cfg_pagesize;
+int cfg_num_of_pages;
+int cfg_eeprom;
+unsigned cfg_pageshift;
+unsigned cfg_pagemask;
+int cfg_pagemsq;
 
 void debug_call(void){
     printf("Using delay of %d us\n", delay);
