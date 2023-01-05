@@ -39,7 +39,7 @@ socket  AVR
 
 ![alt text](https://raw.githubusercontent.com/Trel725/chavrprog/master/schematics.jpg)
 
-### Commads
+### Commands
 
 -d DEVICE - specifies AVR chip  
 -r ADDR - read flash memory from start to ADDR in bytes, or  
@@ -52,7 +52,7 @@ socket  AVR
 use if you're flashing complex HEX, like Arduino bootloader or if default fails  
 -p r - read content of on-chip EEPROM, print in terminal, or  
 -p r FILE - read EEPROM to FILE  
--p w HEX - write eeprom from intel hex file
+-p w HEX - write eeprom from intel hex file  
 -f - read fuse bits  
 -l BYTE - write low fuse, must be in hex format, e.g. 0x2A 
 -H BYTE - write high fuse, must be in hex format, e.g. 0x2A  
@@ -66,7 +66,7 @@ There is 2 verification functions implemented - fast and strict. By default with
 The most typical command set looks like:  
 `chavrprog -d mega328p -a ./firmware.hex`
 
-Disklaimer
+Disclaimer
 -----------
 
 
